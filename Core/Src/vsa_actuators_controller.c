@@ -1,5 +1,6 @@
 #include "vsa_actuators_controller.h"
 
+//================================================================================================================//
 // CAN Bus Variables
 static CAN_TxHeaderTypeDef TxHeader;
 static CAN_RxHeaderTypeDef RxHeader;
@@ -16,7 +17,9 @@ mode_e mode = mode_init;
 void (*state_machine[3])() = {init, normal, safety};
 
 // General Global Variables
+uint32_t power_off_time = 30000; // 30 seconds of interval to turn off system after power off signal arrive
 uint32_t msg_motor_last_time = 0;
+//================================================================================================================//
 
 // Hardware Access
 void set_relay_values(void)
@@ -59,30 +62,48 @@ void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
 
 	switch(RxHeader.StdId)
 	{
+		// If is a relay message
 		case((uint32_t)msg_relays):
 		{
-			memcpy(relays.data, RxData, 3);
-			set_relay_values();
+			if(RxData[3]) // Check the fourth byte of CAN RX array to know if this message update Relay 1 Channel
+			{
+				relays.relay_1 = RxData[0];
+			}
+
+			if(RxData[4]) // Check the fifth byte of CAN RX array to know if this message update Relay 2 Channel
+			{
+				relays.relay_2 = RxData[1];
+			}
+
+			if(RxData[5]) // Check the sixth byte of CAN RX array to know if this message update Relay 3 Channel
+			{
+				relays.relay_3 = RxData[2];
+			}
+
+			set_relay_values(); // Update digital outputs
 			break;
 		}
 
+		// If is a motor message
 		case((uint32_t)msg_motors):
 		{
-			msg_motor_last_time = HAL_GetTick();
+			msg_motor_last_time = HAL_GetTick(); // Update the variable used to monitoring motor message arrive time with current time
 
-			if(mode == mode_normal)
+			if(mode == mode_normal) // Checks the current state of system. Motors only can be updated by CAN message in normal mode.
 			{
-				memcpy(motors.data, RxData, 7);
-				set_motors_values();
+				memcpy(motors.data, RxData, 7); // Update the motors structure with values incoming from CAN message
+				set_motors_values(); // Update PWM outputs
 			}
+
 			break;
 		}
 
+		// If is a set mode message
 		case((uint32_t)msg_set_mode):
 		{
-			if(RxData[1] != (uint8_t)mode_init)
+			if(RxData[1] != (uint8_t)mode_init) // Check if the new mode is different of init mode (init mode should only run when the system is powered on)
 			{
-				set_mode((mode_e)RxData[1]);
+				set_mode((mode_e)RxData[1]); // Set the new mode
 			}
 			break;
 		}
@@ -121,16 +142,24 @@ void init(void)
 	TxData[6] = 0;
 	TxData[7] = 0;
 
+	// Store to time, in milliseconds, of entry in normal mode
+	// to monitoring motor message arrive interval
+	msg_motor_last_time = HAL_GetTick();
+
 	// Set normal mode to run after initialize
 	set_mode(mode_normal);
 }
 
 void normal(void)
 {
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, 0);
-	HAL_Delay(1000);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, 1);
-	HAL_Delay(1000);
+
+	// Monitor the arrival interval of engine messages to
+	// place the system in safety mode if a message fails
+	// to arrive within a specified time frame.
+	if((HAL_GetTick() - msg_motor_last_time) >= 1000)
+	{
+		set_mode(mode_safety);
+	}
 }
 
 void safety(void)
