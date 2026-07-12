@@ -20,7 +20,7 @@ typedef enum
 	msg_motors = 1,
 	msg_set_mode = 2,
 	msg_relays = 3,
-	msg_power_system_off = 4
+	msg_power_system_off = 5
 } message_e;
 
 typedef union

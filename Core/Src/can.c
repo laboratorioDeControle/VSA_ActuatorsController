@@ -53,26 +53,39 @@ void MX_CAN_Init(void)
   {
     Error_Handler();
   }
-
-  CAN_FilterTypeDef  sFilterConfig;
-  sFilterConfig.FilterBank = 0;
-  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
-  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
-  sFilterConfig.FilterIdHigh = 0x000<<5;
-  sFilterConfig.FilterIdLow = 0x0000;
-  sFilterConfig.FilterMaskIdHigh = 0x700<<5;
-  sFilterConfig.FilterMaskIdLow = 0x0000;
-  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
-  sFilterConfig.FilterActivation = ENABLE;
-  sFilterConfig.SlaveStartFilterBank = 14;
-  HAL_CAN_ConfigFilter(&hcan, &sFilterConfig);
-
-  HAL_CAN_Start(&hcan);
-  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
-
   /* USER CODE BEGIN CAN_Init 2 */
+    if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+  	Error_Handler();
+    }
 
-  /* USER CODE END CAN_Init 2 */
+    /* Configure the CAN Filter */
+
+
+    CAN_FilterTypeDef  sFilterConfig;
+    sFilterConfig.FilterBank = 0;
+    sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+    sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+    sFilterConfig.FilterIdHigh     = 0x000<<5;
+    sFilterConfig.FilterIdLow      = 0x0000;
+    sFilterConfig.FilterMaskIdHigh = 0x700<<5;
+    sFilterConfig.FilterMaskIdLow  = 0x0000;
+    sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+    sFilterConfig.FilterActivation = ENABLE;
+    sFilterConfig.SlaveStartFilterBank = 14;
+    if (HAL_CAN_ConfigFilter(&hcan, &sFilterConfig) != HAL_OK)
+    {
+      /* Filter configuration Error*/
+      Error_Handler();
+    }
+
+
+    /* Start the CAN peripheral */
+    if (HAL_CAN_Start(&hcan) != HAL_OK)
+    {
+      /* Start Error */
+      Error_Handler();
+    }
+    /* USER CODE END CAN_Init 2 */
 
 }
 

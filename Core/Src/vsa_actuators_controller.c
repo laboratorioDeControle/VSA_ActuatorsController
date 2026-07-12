@@ -17,6 +17,12 @@ mode_e mode = mode_init;
 void (*state_machine[3])() = {init, normal, safety};
 
 // General Global Variables
+// Send Power off systems variables
+uint32_t power_key_first_click_time = 0;
+uint32_t power_key_bounce_time = 200; // Power key bounce time in milliseconds
+uint32_t power_off_start_time = 0;
+uint8_t power_key_status = 0;
+
 uint32_t power_off_time = 30000; // 30 seconds of interval to turn off system after power off signal arrive
 uint32_t msg_motor_last_time = 0;
 //================================================================================================================//
@@ -24,13 +30,13 @@ uint32_t msg_motor_last_time = 0;
 // Hardware Access
 void set_relay_values(void)
 {
-	uint8_t b_pin3_value = (uint8_t)(relays.relay_1 == 0);
-	uint8_t b_pin4_value = (uint8_t)(relays.relay_2 == 0);
-	uint8_t b_pin15_value = (uint8_t)(relays.relay_3 == 0);
+	uint8_t a_pin15_value = (uint8_t)(relays.relay_1 == 0);
+	uint8_t b_pin3_value = (uint8_t)(relays.relay_2 == 0);
+	uint8_t b_pin4_value = (uint8_t)(relays.relay_3 == 0);
 
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, a_pin15_value);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, b_pin3_value);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, b_pin4_value);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, b_pin15_value);
 }
 
 void set_motors_values(void)
@@ -49,10 +55,29 @@ void set_motors_values(void)
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, motors.thruster_control);
 }
 
+uint8_t value = 0;
+uint8_t count = 0;
 // Specific Purpose
 void external_pin_interrupt_callback(void)
 {
+	HAL_GPIO_WritePin(EMBEDDED_LED_GPIO_Port, EMBEDDED_LED_Pin, value);
+	value = !value;
+	count++;
 
+	if(power_key_first_click_time == 0)
+	{
+		power_key_first_click_time = HAL_GetTick();
+		power_key_status = HAL_GPIO_ReadPin(POWER_KEY_GPIO_Port, POWER_KEY_Pin);
+	}
+	else if((HAL_GetTick() - power_key_first_click_time) >= power_key_bounce_time)
+	{
+		TxData[0] = power_key_status;
+		TxData[1] = count;
+		HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
+
+		power_key_first_click_time = 0;
+		count = 0;
+	}
 }
 
 void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
@@ -114,10 +139,13 @@ void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
 void init(void)
 {
 	// Initialize Relay Structure
-	relays.relay_1 = GPIO_PIN_SET;
-	relays.relay_2 = GPIO_PIN_SET;
-	relays.relay_3 = GPIO_PIN_SET;
+	relays.relay_1 = GPIO_PIN_RESET;
+	relays.relay_2 = GPIO_PIN_RESET;
+	relays.relay_3 = GPIO_PIN_RESET;
 	set_relay_values();
+
+	// Force Seal Contact to Start off
+	HAL_GPIO_WritePin(SEAL_CONTACT_GPIO_Port, SEAL_CONTACT_Pin, GPIO_PIN_SET);
 
 	// Initialize Motor Structure with safe values and set PWM outputs
 	safety();
@@ -152,14 +180,14 @@ void init(void)
 
 void normal(void)
 {
-
+	// HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
 	// Monitor the arrival interval of engine messages to
 	// place the system in safety mode if a message fails
 	// to arrive within a specified time frame.
-	if((HAL_GetTick() - msg_motor_last_time) >= 1000)
-	{
-		set_mode(mode_safety);
-	}
+	// if((HAL_GetTick() - msg_motor_last_time) >= 1000)
+	// {
+	// 	set_mode(mode_safety);
+	// }
 }
 
 void safety(void)
