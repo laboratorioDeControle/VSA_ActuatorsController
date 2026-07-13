@@ -66,8 +66,8 @@ all: main-build
 main-build: VSA_ActuatorsController.elf secondary-outputs
 
 # Tool invocations
-VSA_ActuatorsController.elf VSA_ActuatorsController.map: $(OBJS) $(USER_OBJS) C:\Users\Gabriel-PC\STM32CubeIDE\workspace_2.1.1\VSA_ActuatorsController\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "VSA_ActuatorsController.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Gabriel-PC\STM32CubeIDE\workspace_2.1.1\VSA_ActuatorsController\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="VSA_ActuatorsController.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+VSA_ActuatorsController.elf VSA_ActuatorsController.map: $(OBJS) $(USER_OBJS) /home/gabriel/STM32CubeIDE/workspace_2.1.1/VSA_ActuatorsController/STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "VSA_ActuatorsController.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/home/gabriel/STM32CubeIDE/workspace_2.1.1/VSA_ActuatorsController/STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="VSA_ActuatorsController.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

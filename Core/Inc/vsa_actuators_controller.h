@@ -12,7 +12,7 @@ typedef enum
 {
 	mode_init = 0,
 	mode_normal = 1,
-	mode_safety = 2
+	size_of_modes
 } mode_e;
 
 typedef enum
@@ -20,6 +20,7 @@ typedef enum
 	msg_motors = 1,
 	msg_set_mode = 2,
 	msg_relays = 3,
+	msg_leds = 4,
 	msg_power_system_off = 5
 } message_e;
 
@@ -57,13 +58,18 @@ void set_relay_values(void);
 void set_motors_values(void);
 
 // Specific Purpose
-void external_pin_interrupt_callback(void);
 void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan);
+
+// General Purpose
+void check_motor_msg_timeout(void);
+void check_power_off_timeout(void);
+void check_power_status(void);
+void send_led_report(uint8_t red, uint8_t green, uint8_t blue);
+void send_power_off(void);
 
 // State Machine (operations mode)
 void init(void);
 void normal(void);
-void safety(void);
 
 // State Machine Running and Management
 void run(void);

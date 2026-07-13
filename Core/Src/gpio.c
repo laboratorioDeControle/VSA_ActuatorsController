@@ -81,7 +81,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : POWER_KEY_Pin */
   GPIO_InitStruct.Pin = POWER_KEY_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;// GPIO_PULLUP;
   HAL_GPIO_Init(POWER_KEY_GPIO_Port, &GPIO_InitStruct);
 

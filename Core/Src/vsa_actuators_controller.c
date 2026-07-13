@@ -14,17 +14,20 @@ motors_t motors;
 
 // State Machine Parameters
 mode_e mode = mode_init;
-void (*state_machine[3])() = {init, normal, safety};
+void (*state_machine[size_of_modes])() = {init, normal};
 
 // General Global Variables
-// Send Power off systems variables
-uint32_t power_key_first_click_time = 0;
-uint32_t power_key_bounce_time = 200; // Power key bounce time in milliseconds
-uint32_t power_off_start_time = 0;
-uint8_t power_key_status = 0;
+//Timeouts
+uint32_t motor_msg_timeout = 1000;
+uint32_t power_off_timeout = 30000; // 30 seconds of interval to turn off system after power off signal arrive
 
-uint32_t power_off_time = 30000; // 30 seconds of interval to turn off system after power off signal arrive
+// Timestamps
+uint32_t power_off_start_time = 0;
 uint32_t msg_motor_last_time = 0;
+
+// Signal Flags
+uint8_t power_off_trigger = 0;
+uint8_t power_key_last_status = 0;
 //================================================================================================================//
 
 // Hardware Access
@@ -55,31 +58,7 @@ void set_motors_values(void)
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, motors.thruster_control);
 }
 
-uint8_t value = 0;
-uint8_t count = 0;
 // Specific Purpose
-void external_pin_interrupt_callback(void)
-{
-	HAL_GPIO_WritePin(EMBEDDED_LED_GPIO_Port, EMBEDDED_LED_Pin, value);
-	value = !value;
-	count++;
-
-	if(power_key_first_click_time == 0)
-	{
-		power_key_first_click_time = HAL_GetTick();
-		power_key_status = HAL_GPIO_ReadPin(POWER_KEY_GPIO_Port, POWER_KEY_Pin);
-	}
-	else if((HAL_GetTick() - power_key_first_click_time) >= power_key_bounce_time)
-	{
-		TxData[0] = power_key_status;
-		TxData[1] = count;
-		HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
-
-		power_key_first_click_time = 0;
-		count = 0;
-	}
-}
-
 void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
 {
 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
@@ -114,11 +93,8 @@ void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
 		{
 			msg_motor_last_time = HAL_GetTick(); // Update the variable used to monitoring motor message arrive time with current time
 
-			if(mode == mode_normal) // Checks the current state of system. Motors only can be updated by CAN message in normal mode.
-			{
-				memcpy(motors.data, RxData, 7); // Update the motors structure with values incoming from CAN message
-				set_motors_values(); // Update PWM outputs
-			}
+			memcpy(motors.data, RxData, 7); // Update the motors structure with values incoming from CAN message
+			set_motors_values(); // Update PWM outputs
 
 			break;
 		}
@@ -126,13 +102,101 @@ void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan)
 		// If is a set mode message
 		case((uint32_t)msg_set_mode):
 		{
-			if(RxData[1] != (uint8_t)mode_init) // Check if the new mode is different of init mode (init mode should only run when the system is powered on)
+			// Check if the new mode is different of init mode (init mode should only run when the system is powered on)
+			// or new mode in domain of modes vector
+			if((RxData[1] != (uint8_t)mode_init) && (RxData[1] < (uint8_t)size_of_modes))
 			{
 				set_mode((mode_e)RxData[1]); // Set the new mode
 			}
 			break;
 		}
 	}
+}
+
+// General Purpose
+void check_motor_msg_timeout(void)
+{
+	if((HAL_GetTick() - msg_motor_last_time) >= motor_msg_timeout)
+	{
+		motors.servo_1 = 128;
+		motors.servo_2 = 128;
+		motors.servo_3 = 128;
+		motors.servo_4 = 128;
+		motors.thruster_control = 0;
+		motors.thruster_direction = 0;
+		motors.thruster_enable = 0;
+
+		set_motors_values();
+		msg_motor_last_time = HAL_GetTick();
+	}
+}
+
+void check_power_off_timeout(void)
+{
+	if((HAL_GetTick() - power_off_start_time) >= power_off_start_time)
+	{
+		HAL_GPIO_WritePin(SEAL_CONTACT_GPIO_Port, SEAL_CONTACT_Pin, GPIO_PIN_SET);
+	}
+}
+
+void check_power_status(void)
+{
+	uint8_t power_key_status = (uint8_t)HAL_GPIO_ReadPin(POWER_KEY_GPIO_Port, POWER_KEY_Pin);
+
+	if(power_key_status)
+	{
+		HAL_GPIO_WritePin(SEAL_CONTACT_GPIO_Port, SEAL_CONTACT_Pin, GPIO_PIN_RESET);
+		if(!power_key_last_status)
+		{
+			power_key_last_status = 1;
+			send_led_report(0, 0, 0);
+		}
+	}
+	else
+	{
+		send_power_off();
+
+		if(power_key_last_status)
+		{
+			power_off_start_time = HAL_GetTick();
+			power_off_trigger = 1;
+			power_key_last_status = 0;
+		}
+	}
+}
+
+void send_led_report(uint8_t red, uint8_t green, uint8_t blue)
+{
+	TxHeader.StdId = (uint32_t)msg_leds;
+	TxData[0] = 0;
+	TxData[1] = red;
+	TxData[2] = green;
+	TxData[3] = blue;
+	TxData[4] = 0;
+	TxData[5] = 0;
+	TxData[6] = 0;
+	TxData[7] = 0;
+
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
+	HAL_Delay(10);
+}
+
+void send_power_off(void)
+{
+	send_led_report(0, 0, 100);
+
+	TxHeader.StdId = (uint32_t)msg_power_system_off;
+	TxData[0] = 0;
+	TxData[1] = 0;
+	TxData[2] = 0;
+	TxData[3] = 0;
+	TxData[4] = 0;
+	TxData[5] = 0;
+	TxData[6] = 0;
+	TxData[7] = 0;
+
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
+	HAL_Delay(10);
 }
 
 // State Machine (operations mode)
@@ -148,50 +212,6 @@ void init(void)
 	HAL_GPIO_WritePin(SEAL_CONTACT_GPIO_Port, SEAL_CONTACT_Pin, GPIO_PIN_SET);
 
 	// Initialize Motor Structure with safe values and set PWM outputs
-	safety();
-
-	// Initialize CAN TX
-	HAL_CAN_ActivateNotification(&hcan, TxMailBox);
-
-	// Initialize System Power OFF CAN Message
-	TxHeader.StdId = (uint32_t)msg_power_system_off;
-	TxHeader.RTR = CAN_RTR_DATA;
-	TxHeader.IDE = CAN_ID_STD;
-	TxHeader.DLC = 8;
-	TxHeader.TransmitGlobalTime = DISABLE;
-
-	// Initialize CAN Output Buffer
-	TxData[0] = 0;
-	TxData[1] = 0;
-	TxData[2] = 0;
-	TxData[3] = 0;
-	TxData[4] = 0;
-	TxData[5] = 0;
-	TxData[6] = 0;
-	TxData[7] = 0;
-
-	// Store to time, in milliseconds, of entry in normal mode
-	// to monitoring motor message arrive interval
-	msg_motor_last_time = HAL_GetTick();
-
-	// Set normal mode to run after initialize
-	set_mode(mode_normal);
-}
-
-void normal(void)
-{
-	// HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailBox);
-	// Monitor the arrival interval of engine messages to
-	// place the system in safety mode if a message fails
-	// to arrive within a specified time frame.
-	// if((HAL_GetTick() - msg_motor_last_time) >= 1000)
-	// {
-	// 	set_mode(mode_safety);
-	// }
-}
-
-void safety(void)
-{
 	motors.servo_1 = 128;
 	motors.servo_2 = 128;
 	motors.servo_3 = 128;
@@ -199,8 +219,44 @@ void safety(void)
 	motors.thruster_control = 0;
 	motors.thruster_direction = 0;
 	motors.thruster_enable = 0;
-
 	set_motors_values();
+
+	// Initialize CAN TX
+	HAL_CAN_ActivateNotification(&hcan, TxMailBox);
+
+	// Initialize CAN Message Header
+	TxHeader.RTR = CAN_RTR_DATA;
+	TxHeader.IDE = CAN_ID_STD;
+	TxHeader.DLC = 8;
+	TxHeader.TransmitGlobalTime = DISABLE;
+
+	// Store to time, in milliseconds, of entry in normal mode
+	// to monitoring motor message arrive interval
+	msg_motor_last_time = HAL_GetTick();
+
+	// Send initialized led report
+	send_led_report(0, 0, 0);
+
+	// Set normal mode to run after initialize
+	set_mode(mode_normal);
+}
+
+void normal(void)
+{
+	// Monitor the arrival interval of engine messages to
+	// force actuators in safety values if a message fails
+	// to arrive within a specified time frame.
+	check_motor_msg_timeout();
+
+	// Checks if the power switch is engaged to keep the seal-in contact active.
+	// Otherwise, it initiates the system power off process.
+	check_power_status();
+
+	// Check if power off process has been started
+	if(power_off_trigger)
+	{
+		check_power_off_timeout();
+	}
 }
 
 // State Machine Running and Management
