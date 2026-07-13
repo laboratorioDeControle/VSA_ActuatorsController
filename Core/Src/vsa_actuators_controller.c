@@ -133,9 +133,10 @@ void check_motor_msg_timeout(void)
 
 void check_power_off_timeout(void)
 {
-	if((HAL_GetTick() - power_off_start_time) >= power_off_start_time)
+	if((HAL_GetTick() - power_off_start_time) >= power_off_timeout)
 	{
 		HAL_GPIO_WritePin(SEAL_CONTACT_GPIO_Port, SEAL_CONTACT_Pin, GPIO_PIN_SET);
+		power_off_trigger = 0;
 	}
 }
 
@@ -154,10 +155,9 @@ void check_power_status(void)
 	}
 	else
 	{
-		send_power_off();
-
 		if(power_key_last_status)
 		{
+			send_power_off();
 			power_off_start_time = HAL_GetTick();
 			power_off_trigger = 1;
 			power_key_last_status = 0;
