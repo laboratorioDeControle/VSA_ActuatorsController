@@ -64,7 +64,7 @@ void can_rx_interrupt_callback(CAN_HandleTypeDef *hcan);
 void check_motor_msg_timeout(void);
 void check_power_off_timeout(void);
 void check_power_status(void);
-void send_led_report(uint8_t red, uint8_t green, uint8_t blue);
+void send_led_report(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
 void send_power_off(void);
 
 // State Machine (operations mode)

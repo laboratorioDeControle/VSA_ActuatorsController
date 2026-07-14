@@ -150,7 +150,7 @@ void check_power_status(void)
 		if(!power_key_last_status)
 		{
 			power_key_last_status = 1;
-			send_led_report(0, 0, 0);
+			send_led_report(0, 0, 0, 0);
 		}
 	}
 	else
@@ -165,13 +165,13 @@ void check_power_status(void)
 	}
 }
 
-void send_led_report(uint8_t red, uint8_t green, uint8_t blue)
+void send_led_report(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
 	TxHeader.StdId = (uint32_t)msg_leds;
-	TxData[0] = 0;
-	TxData[1] = red;
-	TxData[2] = green;
-	TxData[3] = blue;
+	TxData[0] = red;
+	TxData[1] = green;
+	TxData[2] = blue;
+	TxData[3] = white;
 	TxData[4] = 0;
 	TxData[5] = 0;
 	TxData[6] = 0;
@@ -183,7 +183,7 @@ void send_led_report(uint8_t red, uint8_t green, uint8_t blue)
 
 void send_power_off(void)
 {
-	send_led_report(0, 0, 100);
+	send_led_report(0, 0, 100, 0);
 
 	TxHeader.StdId = (uint32_t)msg_power_system_off;
 	TxData[0] = 0;
@@ -235,7 +235,7 @@ void init(void)
 	msg_motor_last_time = HAL_GetTick();
 
 	// Send initialized led report
-	send_led_report(0, 0, 0);
+	send_led_report(0, 0, 0, 0);
 
 	// Set normal mode to run after initialize
 	set_mode(mode_normal);
