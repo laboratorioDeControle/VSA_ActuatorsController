@@ -1,0 +1,320 @@
+(footprint "PinBar_1x09_P2.54mm_Vertical_PTH_BigPadds"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Through hole straight pin header, 1x09, 2.54mm pitch, single row")
+	(tags "Through hole pin header THT 1x09 2.54mm single row")
+	(property "Reference" "REF**"
+		(at 0 -12.6 0)
+		(layer "F.SilkS")
+		(uuid "a97cc634-3fa8-40bc-a539-eb88a3e2be63")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "PinBar_1x09_P2.54mm_Vertical_PTH_BigPadds"
+		(at 0 12.54 0)
+		(layer "F.Fab")
+		(uuid "f26d306e-8623-416d-84ca-e399e334df6d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 -10.16 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "62bf6da9-5dc6-44a8-a53e-e72f4d7c3132")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 -10.16 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "411f6b63-108f-448c-9f4e-5dc4022a3167")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_line
+		(start -1.9 -11.54)
+		(end -0.52 -11.54)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "2b693fb9-d92b-475d-8003-14835a32e15c")
+	)
+	(fp_line
+		(start -1.9 -10.16)
+		(end -1.9 -11.54)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "d9cf52d2-af63-477b-8f77-a2b271a12633")
+	)
+	(fp_line
+		(start -1.9 -8.89)
+		(end -1.9 11.54)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "4f41b740-cbb7-4ed1-bacf-18e94ce4e2e1")
+	)
+	(fp_line
+		(start -1.9 -8.89)
+		(end 1.9 -8.89)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "81ff7e84-5d2d-4050-99da-13d6286f71a2")
+	)
+	(fp_line
+		(start -1.9 11.54)
+		(end 1.9 11.54)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8a5bc1d1-4d0b-42a0-8fdf-b82a06006e4f")
+	)
+	(fp_line
+		(start 1.9 -8.875)
+		(end 1.9 11.555)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "5499f4be-f565-4a54-b753-d72b99752e71")
+	)
+	(fp_line
+		(start -2.2 -11.93)
+		(end -2.2 11.93)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "7cb16255-934a-451e-83a4-2bb69a813817")
+	)
+	(fp_line
+		(start -2.2 11.93)
+		(end 2.2 11.93)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "341140e9-a7fd-467c-a8c9-cd25d374d24d")
+	)
+	(fp_line
+		(start 2.2 -11.93)
+		(end -2.2 -11.93)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "5432ae9a-12eb-4f24-bb48-3a00e323cec6")
+	)
+	(fp_line
+		(start 2.2 11.97)
+		(end 2.2 -11.89)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "388881fd-ec14-44fb-9264-3aa4bd1cb6d8")
+	)
+	(fp_line
+		(start -1.27 -10.795)
+		(end -0.635 -11.43)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "aa0910ea-0ec7-449d-9838-ef49d0650434")
+	)
+	(fp_line
+		(start -1.27 11.43)
+		(end -1.27 -10.795)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "30c51ec3-b55f-4179-a4e8-0226ddfc1876")
+	)
+	(fp_line
+		(start -0.635 -11.43)
+		(end 1.27 -11.43)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d3a0bb2f-4ec2-4145-a14d-77921bb3375b")
+	)
+	(fp_line
+		(start 1.27 -11.43)
+		(end 1.27 11.43)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "20ac344c-f0d5-4c46-b4c0-ba8a351459dc")
+	)
+	(fp_line
+		(start 1.27 11.43)
+		(end -1.27 11.43)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2a6c97d6-e24a-4ab7-8afb-fcc0d80e399e")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 90)
+		(layer "F.Fab")
+		(uuid "07d3a5eb-db32-4bd5-bf3d-987277f8de09")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole rect
+		(at 0 -10.16)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "41b12c75-09f7-4f49-867b-1ac786ccb6c6")
+	)
+	(pad "2" thru_hole oval
+		(at 0 -7.62)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "6ec1c635-f167-420c-82c8-f1cd57a399b3")
+	)
+	(pad "3" thru_hole oval
+		(at 0 -5.08)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "50c705da-93d3-44b3-89e1-ede596593ff0")
+	)
+	(pad "4" thru_hole oval
+		(at 0 -2.54)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "61962e01-e42e-48ca-bef0-b8db0cb4a87a")
+	)
+	(pad "5" thru_hole oval
+		(at 0 0)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "65b6cfc2-753e-4fdc-98eb-0e686c2c6627")
+	)
+	(pad "6" thru_hole oval
+		(at 0 2.54)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "c483e3c8-68fb-4471-9a83-13e917614139")
+	)
+	(pad "7" thru_hole oval
+		(at 0 5.08)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "c9a6e9fb-9dbd-47cd-b568-7b6b847decfb")
+	)
+	(pad "8" thru_hole oval
+		(at 0 7.62)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "1edc9e38-0f5c-4da5-a298-15a860779890")
+	)
+	(pad "9" thru_hole oval
+		(at 0 10.16)
+		(size 3.5 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(thermal_bridge_angle 45)
+		(uuid "4c9bde7b-b27e-4a35-aa1e-85dc236d6d9e")
+	)
+	(embedded_fonts no)
+	(model "${ACELERAVR_3DMODELS}/connectors/PinBar_Female_1x09_P2.54mm_PTH_Vertical.step"
+		(offset
+			(xyz 0 10.16 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+	(model "${ACELERAVR_3DMODELS}/connectors/PinBar_Male_1x09_P2.54mm_PTH_Vertical.step"
+		(hide yes)
+		(offset
+			(xyz 0 10.16 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -0)
+		)
+	)
+)
