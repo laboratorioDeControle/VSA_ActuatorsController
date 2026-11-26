@@ -30,7 +30,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "VSA_Basic_Components:C_Disc_D7.5mm_W2.5mm_P5.00mm_BigPadds"
 			(at 0.9652 -3.81 0)
 			(effects
 				(font
@@ -169,7 +169,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "VSA_Basic_Components:CP_Radial_D5.0mm_P2.50mm_BigPadds"
 			(at 0.9652 -3.81 0)
 			(effects
 				(font
@@ -495,7 +495,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "VSA_Basic_Components:Resistor_BigPadds"
 			(at -1.778 0 90)
 			(effects
 				(font
@@ -619,7 +619,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "VSA_Basic_Components:Transistor_BC548"
 			(at 5.08 -1.905 0)
 			(effects
 				(font
@@ -824,7 +824,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "VSA_Basic_Components:Transistor_BC548"
 			(at 5.08 -1.905 0)
 			(effects
 				(font

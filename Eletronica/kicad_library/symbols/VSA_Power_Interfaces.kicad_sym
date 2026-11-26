@@ -27,7 +27,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_DIP:DIP-4_W7.62mm"
+		(property "Footprint" "VSA_Power_Interfaces:PC817_BigPadds"
 			(at -5.08 -5.08 0)
 			(effects
 				(font
@@ -330,7 +330,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Relay_THT:Relay_SPDT_Omron-G5LE-1"
+		(property "Footprint" "VSA_Basic_Components:Relay_BigPadds"
 			(at 11.43 -1.27 0)
 			(effects
 				(font

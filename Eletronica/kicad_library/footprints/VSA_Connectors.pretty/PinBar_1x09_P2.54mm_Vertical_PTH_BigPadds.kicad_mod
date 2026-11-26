@@ -294,7 +294,7 @@
 		(uuid "4c9bde7b-b27e-4a35-aa1e-85dc236d6d9e")
 	)
 	(embedded_fonts no)
-	(model "${ACELERAVR_3DMODELS}/connectors/PinBar_Female_1x09_P2.54mm_PTH_Vertical.step"
+	(model "${VSA_3DMODELS}/connectors/PinBar_Female_1x09_P2.54mm_PTH_Vertical.step"
 		(offset
 			(xyz 0 10.16 0)
 		)
@@ -305,7 +305,7 @@
 			(xyz 0 0 0)
 		)
 	)
-	(model "${ACELERAVR_3DMODELS}/connectors/PinBar_Male_1x09_P2.54mm_PTH_Vertical.step"
+	(model "${VSA_3DMODELS}/connectors/PinBar_Male_1x09_P2.54mm_PTH_Vertical.step"
 		(hide yes)
 		(offset
 			(xyz 0 10.16 0)

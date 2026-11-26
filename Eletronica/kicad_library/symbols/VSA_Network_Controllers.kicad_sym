@@ -202,7 +202,7 @@
 				)
 			)
 		)
-		(property "Footprint" "EvaluationBoards:Wiznet_W5500_Module"
+		(property "Footprint" "VSA_Network_Controllers:Wiznet_W5500_Module"
 			(at 0 0 0)
 			(effects
 				(font
